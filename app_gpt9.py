@@ -119,8 +119,14 @@ def split_paragraphs_for_toc(paragraphs, max_tokens=3000):
         chunks.append(current_chunk.strip())
     
     return chunks
+def clean_output_toc(text):
+    # Remove unnecessary line breaks and extra spaces
+    text = text.replace("\n\n", "\n")  # Replace double newlines with single newlines
+    text = text.replace("\n", " ").strip()  # Remove unwanted newlines completely, then strip extra spaces
+    text = re.sub(r'\s+', ' ', text)  # Collapse multiple spaces into one
+    return text
 
-# Function to extract a table of contents (TOC) using GPT-3.5-turbo for each chunk
+# Function to extract a table of contents (TOC) using GPT-3.5-turbo
 def extract_toc_gpt(paragraphs):
     chunks = split_paragraphs_for_toc(paragraphs)
     toc_list = []
@@ -140,15 +146,17 @@ def extract_toc_gpt(paragraphs):
                 temperature=0.3,
             )
             toc = response.choices[0].message.content.strip()
-            toc_list.append(toc)
+            toc_list.append(clean_output_toc(toc))  # Clean the output for proper formatting
 
         except Exception as e:
             st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
             return None
     
     # Combine all TOC parts into one
-    full_toc = "\n".join(toc_list)
+    full_toc = "\n\n".join(toc_list)
     return full_toc
+# Function to extract a table of contents (TOC) using GPT-3.5-turbo for each chunk
+
 # Preprocess text for PDFs to remove unwanted elements and retain paragraph structure
 def preprocess_paragraphs(paragraphs):
     cleaned_paragraphs = []
