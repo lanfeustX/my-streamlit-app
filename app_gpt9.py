@@ -115,10 +115,10 @@ def extract_toc_gpt(paragraphs):
 
     for chunk in toc_chunks:
         prompt = (
-            "Génère une table des matières à partir de ce texte. "
-            "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
-            "Utilise les informations de structure comme les titres, les introductions de chapitre et les phrases numérotées pour créer une table des matières complète et ordonnée. "
-            "Voici le texte :\n\n" + chunk
+            f"Génère une table des matières à partir de ce texte. "
+            f"Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
+            f"Utilise les informations de structure comme les titres, les introductions de chapitre et les phrases numérotées pour créer une table des matières complète et ordonnée. "
+            f"Voici le texte :\n\n" + chunk
         )
         
         try:
