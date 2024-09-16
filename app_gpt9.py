@@ -120,12 +120,18 @@ def split_paragraphs_for_toc(paragraphs, max_tokens=3000):
     
     return chunks
 def clean_output_toc(text):
-    # Remove unnecessary line breaks and extra spaces
-    text = text.replace("\n\n", "\n")  # Replace double newlines with single newlines
-    text = text.replace("\n", " ").strip()  # Remove unwanted newlines completely, then strip extra spaces
-    text = re.sub(r'\s+', ' ', text)  # Collapse multiple spaces into one
-    return text
+    # Clean the output while preserving line breaks and indentation
+    # Replace double newlines with single newlines
+    text = text.replace("\n\n", "\n")
 
+    # Remove unnecessary whitespace
+    text = text.strip()  # Remove leading and trailing whitespace
+    text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with single spaces
+
+    # Optional: Add indentation (if needed)
+    # text = "\n".join(f"  {line}" for line in text.splitlines()) 
+
+    return text
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo
 def extract_toc_gpt(paragraphs):
     chunks = split_paragraphs_for_toc(paragraphs)
