@@ -9,6 +9,52 @@ import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
 # Load API key from environment variable
 
+# --- App Design Enhancements ---
+
+# --- Function to display the pricing page ---
+def show_pricing_page():
+    st.title("Options d'abonnement")
+
+    st.markdown(
+        """
+        ## Choisissez l'abonnement qui vous convient :
+
+        ### Abonnement hebdomadaire : 15$
+
+        * **6 résumés autorisés par semaine.**
+        * Idéal pour les étudiants qui ont besoin de résumer quelques cours chaque semaine.
+        * Accès à toutes les fonctionnalités de base.
+
+        ### Abonnement mensuel : 50$
+
+        * **20 résumés autorisés par mois.**
+        * Parfait pour les étudiants ou professionnels qui ont besoin de résumer un grand nombre de documents.
+        * Accès à toutes les fonctionnalités, y compris les fonctionnalités premium (à venir).
+
+        ---
+
+        **Avantages des abonnements :**
+
+        * **Gain de temps considérable :** Obtenez des résumés concis et précis en quelques minutes.
+        * **Meilleure compréhension :** Concentrez-vous sur les points clés de vos documents.
+        * **Amélioration de la productivité :** Traitez plus d'informations en moins de temps.
+
+        **Prêt à vous abonner ?**
+
+        Cliquez sur le bouton ci-dessous pour choisir votre abonnement et commencer à profiter de tous les avantages !
+
+        """
+    )
+
+# --- Sidebar ---
+st.sidebar.title("Options de paiement")
+st.sidebar.write("Prix par résumé : 5$")  # Display price per summary
+
+if st.sidebar.button("Obtenir un abonnement"):
+    show_pricing_page()  # Show the pricing page
+
+# --- Main Content ---
+st.title("Résumé de cours")
 
 # --- Get OpenAI API key from user input ---
 openai_api_key = st.text_input("Entrez votre clé API OpenAI :", type="password")
