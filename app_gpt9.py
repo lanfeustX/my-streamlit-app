@@ -213,7 +213,7 @@ def split_into_chunks(paragraphs, max_chars):
 def summarize_chunk(chunk):
     prompt = (
         f"Vous êtes un assistant pédagogique chargé de condenser un cours de droit. "
-        f"Faites un résumé concis et fluide en regroupant les idées dans des paragraphes cohérents. "
+        f"Faites un résumé concis et fluide en regroupant les idées dans des paragraphes cohérents. Incluez une table des matières au début cohérente avec le texte original"
         f"Conservez uniquement les points clés essentiels et faites un résumé exhaustif du texte suivant :\n\n"
         f"Texte à résumer :\n\n{chunk}"
     )
