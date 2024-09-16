@@ -3,6 +3,7 @@ from io import BytesIO
 from docx import Document
 from fpdf import FPDF
 import fitz  # PyMuPDF
+import os
 import openai
 import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
