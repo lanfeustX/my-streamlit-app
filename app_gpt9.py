@@ -9,6 +9,8 @@ import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
 # Load API key from environment variable
 
+pdf = FPDF()
+pdf.set_font_dir("/path/to/your/system/font/directory")
 # --- App Design Enhancements ---
 
 # --- Function to display the pricing page ---
@@ -198,19 +200,22 @@ def summarize_entire_document_docx(paragraphs):
     return "\n\n".join(summarized_chunks)
 
 # Function to create a .docx file with the summarized text
-def create_summary_docx(summary):
-    doc = Document()
-    
-    # Add the summary as the main content
-    doc.add_heading('Résumé du cours de droit', 0)
-    doc.add_paragraph(summary)
-    
-    # Save the document to a buffer
+def create_summary_pdf(summary):
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    # Add DejaVuSans.ttf (ensure it's in the same directory as your script)
+    pdf.add_font("DejaVu", "", "DejaVuSans.ttf", uni=True) 
+    pdf.set_font("DejaVu", size=10)  # Reduced font size for more condensed output
+
+    clean_summary = summary.replace("\n\n", "\n")  # Proper paragraph breaks but not double-spaced
+    pdf.multi_cell(0, 5, clean_summary)  # Adjust cell height (line spacing) to 5
+
     buffer = BytesIO()
-    doc.save(buffer)
+    pdf.output(buffer)
     buffer.seek(0)
     return buffer
-
 # Function to create a PDF file with the summarized text
 def create_summary_pdf(summary):
     pdf = FPDF()
