@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 # Load API key from environment variable
 
 pdf = FPDF()
-pdf.set_font_dir("/path/to/your/system/font/directory")
+pdf.set_font_dir("/Users/benjamin/Desktop/ficheio/DejaVuSansCondensed.ttf")
 # --- App Design Enhancements ---
 
 # --- Function to display the pricing page ---
