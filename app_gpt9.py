@@ -54,7 +54,7 @@ if st.sidebar.button("Obtenir un abonnement"):
     show_pricing_page()  # Show the pricing page
 
 # --- Main Content ---
-st.title("Résumé de cours")
+st.title("Choix du LLM")
 
 # --- Get OpenAI API key from user input ---
 openai_api_key = st.text_input("Entrez votre clé API OpenAI :", type="password")
