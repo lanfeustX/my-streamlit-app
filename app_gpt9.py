@@ -214,6 +214,7 @@ def summarize_chunk(chunk):
     prompt = (
         f"Vous êtes un assistant pédagogique chargé de condenser un cours de droit. "
         f"Faites un résumé concis et fluide en regroupant les idées dans des paragraphes cohérents. Incluez une table des matières au début cohérente avec le texte original, en vous inspirant des parties qui sont déjà numérotées dans le document."
+        f"Ne pas inclure la table des matières dans le texte. Inclure la table des matières de toutes les parties au début du résumé"
         f"Conservez uniquement les points clés essentiels et faites un résumé exhaustif du texte suivant :\n\n"
         f"Texte à résumer :\n\n{chunk}"
     )
