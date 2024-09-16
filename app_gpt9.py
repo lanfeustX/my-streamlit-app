@@ -103,43 +103,52 @@ def read_pdf(file):
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo
 
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo
+
+# Function to extract a table of contents (TOC) using GPT-3.5-turbo
 def extract_toc_gpt(paragraphs):
-    chunks = split_into_chunks(paragraphs, max_chars=PDF_CHUNK_SIZE)  # Reuse the chunk function
-    toc_list = []
+    # Preprocess text for TOC
+    structured_text = preprocess_text_for_toc(paragraphs)
 
-    for chunk in chunks:
-        prompt = (
-            "Génère une table des matières à partir de ce texte. "
-            " je veux que la table des matières soit au format liste numérotée , et chaque entrée sur une ligne différente"
-            "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
-            "Voici le texte :\n\n{chunk}"
-        )
-        
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=1500,  # Safe token limit
-                temperature=0.3,
-            )
-            toc = response.choices[0].message.content.strip()
-            toc_list.append(clean_output_toc(toc))  # Reuse the cleaning function
-        except Exception as e:
-            st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
-            return None
+    prompt = (
+        "Génère une table des matières à partir de ce texte. "
+        "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
+        "Utilise les informations de structure comme les titres, les introductions de chapitre et les phrases numérotées pour créer une table des matières complète et ordonnée. "
+        "Voici le texte :\n\n" + structured_text
+    )
     
-    # Combine all TOC parts into one
-    full_toc = "\n\n".join(toc_list)
-    return full_toc
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1500,  # Safe token limit
+            temperature=0.3,
+        )
+        toc = response.choices[0].message.content.strip()
+        return toc
+    except Exception as e:
+        st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
+        return None
 
+# Function to preprocess text for TOC extraction
+def preprocess_text_for_toc(paragraphs):
+    structured_text = []
+    for para in paragraphs:
+        # Extract titles (assuming they start with a capital letter and are followed by a colon)
+        match = re.search(r"^[A-Z][^:]*:\s*", para)
+        if match:
+            structured_text.append(match.group(0).strip())
+        else:
+            # Extract sentences starting with numbers or Roman numerals
+            sentences = re.split(r'(?<=[.?!])\s', para)
+            for sentence in sentences:
+                if re.match(r"^[1-9]\.\s|^I\.\s|^II\.\s|^III\.\s", sentence):
+                    structured_text.append(sentence.strip())
+                else:
+                    # Extract potential chapter introductions (assuming they start with a capital letter and are followed by a period)
+                    if re.match(r"^[A-Z].*\.", sentence):
+                        structured_text.append(sentence.strip())
+    return "\n\n".join(structured_text)
 
-def clean_output_toc(text):
-    # Clean the output while preserving line breaks and indentation
-    text = text.replace("\n\n", "\n")  # Remove double newlines
-    text = text.strip()  # Remove leading and trailing whitespace
-    text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with single spaces
-    text = re.sub(r'\n\s*\n', '\n\n', text)  # Ensure proper line breaks between TOC items
-    return text
 
 
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo for each chunk
