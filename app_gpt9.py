@@ -254,7 +254,7 @@ if st.button("Générer"):
     with st.spinner("Génération en cours..."):
         try:
             if generate_toc:
-                toc = extract_toc(paragraphs)
+                toc = extract_toc_gpt(paragraphs)
                 output = "\n".join(toc)
             else:
                 if output_format == "pdf":
