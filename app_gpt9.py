@@ -98,43 +98,11 @@ def read_pdf(file):
     paragraphs = [para for para in text.split('\n') if para.strip() != ""]
     return paragraphs
 
-# Function to extract a table of contents (TOC) based on document structure
-# Function to split the document into smaller chunks based on token size
-def split_paragraphs_for_toc(paragraphs, max_tokens=3000):
-    chunks = []
-    current_chunk = ""
-    current_token_count = 0
 
-    for para in paragraphs:
-        token_count = len(para.split())
-        if current_token_count + token_count > max_tokens:
-            chunks.append(current_chunk.strip())
-            current_chunk = para
-            current_token_count = token_count
-        else:
-            current_chunk += " " + para
-            current_token_count += token_count
 
-    if current_chunk:
-        chunks.append(current_chunk.strip())
-    
-    return chunks
-def clean_output_toc(text):
-    # Clean the output while preserving line breaks and indentation
-    # Replace double newlines with single newlines
-    text = text.replace("\n\n", "\n")
-
-    # Remove unnecessary whitespace
-    text = text.strip()  # Remove leading and trailing whitespace
-    text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with single spaces
-
-    # Optional: Add indentation (if needed)
-    # text = "\n".join(f"  {line}" for line in text.splitlines()) 
-
-    return text
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo
 def extract_toc_gpt(paragraphs):
-    chunks = split_paragraphs_for_toc(paragraphs)
+    chunks = split_into_chunks(paragraphs, max_chars=PDF_CHUNK_SIZE)  # Reuse the chunk function
     toc_list = []
 
     for chunk in chunks:
@@ -152,8 +120,7 @@ def extract_toc_gpt(paragraphs):
                 temperature=0.3,
             )
             toc = response.choices[0].message.content.strip()
-            toc_list.append(clean_output_toc(toc))  # Clean the output for proper formatting
-
+            toc_list.append(clean_output(toc))  # Reuse the cleaning function
         except Exception as e:
             st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
             return None
@@ -161,6 +128,7 @@ def extract_toc_gpt(paragraphs):
     # Combine all TOC parts into one
     full_toc = "\n\n".join(toc_list)
     return full_toc
+
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo for each chunk
 
 # Preprocess text for PDFs to remove unwanted elements and retain paragraph structure
