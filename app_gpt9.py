@@ -99,14 +99,27 @@ def read_pdf(file):
     return paragraphs
 
 # Function to extract a table of contents (TOC) based on document structure
-def extract_toc(paragraphs):
-    toc = []
-    for i, para in enumerate(paragraphs):
-        # Identify chapter, section, or subsection based on common patterns
-        if re.match(r'(Chapitre|Section|Partie|Sous-section|Article)\s\d+', para):
-            toc.append(f"{para} (Page {i+1})")
-    return toc
+def extract_toc_gpt(paragraphs):
+    text = "\n".join(paragraphs)  # Combine paragraphs into a single text
+    prompt = (
+        "Génère une table des matières à partir de ce texte. "
+        "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
+        "Voici le texte :\n\n" + text
+    )
+    
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1500,  # You can adjust the token limit if needed
+            temperature=0.3,
+        )
+        toc = response.choices[0].message.content.strip()
+        return toc
 
+    except Exception as e:
+        st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
+        return None
 # Preprocess text for PDFs to remove unwanted elements and retain paragraph structure
 def preprocess_paragraphs(paragraphs):
     cleaned_paragraphs = []
