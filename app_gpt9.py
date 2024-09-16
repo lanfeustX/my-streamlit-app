@@ -9,7 +9,7 @@ import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
 # Load API key from environment variable      
 pdf = FPDF()
-pdf.add_font("DejaVu", "", "/Users/benjamin/Desktop/ficheio/DejaVuSansCondensed.ttf", uni=True)
+pdf.add_font("DejaVuSansCondensed.ttf", "", "/Users/benjamin/Desktop/ficheio", uni=True)
 
     
 
