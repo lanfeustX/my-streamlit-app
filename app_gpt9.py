@@ -108,26 +108,52 @@ def read_pdf(file):
 def extract_toc_gpt(paragraphs):
     # Preprocess text for TOC
     structured_text = preprocess_text_for_toc(paragraphs)
-
-    prompt = (
-        "Génère une table des matières à partir de ce texte. "
-        "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
-        "Utilise les informations de structure comme les titres, les introductions de chapitre et les phrases numérotées pour créer une table des matières complète et ordonnée. "
-        "Voici le texte :\n\n" + structured_text
-    )
     
-    try:
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=1500,  # Safe token limit
-            temperature=0.3,
+    # Chunking to handle long text
+    toc_chunks = split_into_chunks(structured_text, max_chars=10000)  # Adjust the chunk size as needed
+    toc_list = []
+
+    for chunk in toc_chunks:
+        prompt = (
+            "Génère une table des matières à partir de ce texte. "
+            "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
+            "Utilise les informations de structure comme les titres, les introductions de chapitre et les phrases numérotées pour créer une table des matières complète et ordonnée. "
+            "Voici le texte :\n\n" + chunk
         )
-        toc = response.choices[0].message.content.strip()
-        return toc
-    except Exception as e:
-        st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
-        return None
+        
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=1500,  # Safe token limit
+                temperature=0.3,
+            )
+            toc = response.choices[0].message.content.strip()
+            toc_list.append(toc) 
+        except Exception as e:
+            st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
+            return None
+
+    # Combine all TOC parts into one
+    full_toc = "\n\n".join(toc_list)
+    return full_toc
+
+# Function to preprocess text for TOC extraction
+# ... (Rest of your code) ...
+
+# Function to split the text into chunks for summarization
+def split_into_chunks(text, max_chars):
+    chunks = []
+    current_chunk = ""
+    for para in text.split("\n\n"):
+        if len(current_chunk) + len(para) > max_chars:
+            chunks.append(current_chunk.strip())
+            current_chunk = para
+        else:
+            current_chunk += " " + para
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    return chunks
 
 # Function to preprocess text for TOC extraction
 def preprocess_text_for_toc(paragraphs):
