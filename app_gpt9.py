@@ -184,7 +184,7 @@ def create_summary_pdf(summary):
     return buffer
 
 # Streamlit interface
-st.title("Résumé concis en français avec GPT-3.5 (Condensé à 10-15 pages)")
+st.title("Résumé de cours")
 
 # File uploader with a unique key
 uploaded_file = st.file_uploader(
@@ -211,7 +211,7 @@ if uploaded_file is not None:
     st.text_area("Texte du document", "\n\n".join(paragraphs[:5]), height=300)
 
 # Summarization button
-if st.button("Générer un résumé condensé (10-15 pages)"):
+if st.button("Générer un résumé"):
     with st.spinner("Génération du résumé..."):
         try:
             if output_format == "pdf":
