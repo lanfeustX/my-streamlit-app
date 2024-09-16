@@ -140,15 +140,20 @@ def preprocess_text_for_toc(paragraphs):
         else:
             # Extract sentences starting with numbers or Roman numerals
             sentences = re.split(r'(?<=[.?!])\s', para)
-            for sentence in sentences:
+            for i, sentence in enumerate(sentences):
                 if re.match(r"^[1-9]\.\s|^I\.\s|^II\.\s|^III\.\s", sentence):
                     structured_text.append(sentence.strip())
+                    if i + 1 < len(sentences):  # Check if there's a next sentence
+                        structured_text.append(sentences[i + 1].strip())  # Add the next sentence if available
+                    break  # Stop processing sentences after a numbered sentence
                 else:
                     # Extract potential chapter introductions (assuming they start with a capital letter and are followed by a period)
                     if re.match(r"^[A-Z].*\.", sentence):
                         structured_text.append(sentence.strip())
+                        if i + 1 < len(sentences):  # Check if there's a next sentence
+                            structured_text.append(sentences[i + 1].strip())  # Add the next sentence if available
+                        break  # Stop processing sentences after a chapter introduction
     return "\n\n".join(structured_text)
-
 
 
 # Function to extract a table of contents (TOC) using GPT-3.5-turbo for each chunk
