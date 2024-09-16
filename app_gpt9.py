@@ -74,10 +74,10 @@ if openai_api_key is None:
 openai.api_key = openai_api_key
 # Constants# Constants
 MAX_TOKENS_PER_REQUEST = 4096  # A safer limit to avoid hitting the token cap
-PDF_CHUNK_SIZE = 1000  # Smaller chunk size for faster PDF processing
-DOCX_CHUNK_SIZE = 3000  # Larger chunk size for DOCX files
+PDF_CHUNK_SIZE = 3000  # Smaller chunk size for faster PDF processing
+DOCX_CHUNK_SIZE = 6000  # Larger chunk size for DOCX files
 MAX_WORKERS = 4  # Number of threads for parallel processing
-MAX_CHUNK_TOKENS = 2048  # Maximum token limit per chunk (for safety)
+MAX_CHUNK_TOKENS = 4000  # Maximum token limit per chunk (for safety)
 # Function to read a .docx file and return a list of paragraphs
 def read_docx(file):
     doc = Document(file)
