@@ -20,8 +20,6 @@ beautifulsoup4==4.10.0
 black==21.12b0
 bleach==4.1.0
 blinker==1.8.2
-blp==0.0.3
-blpapi==3.24.4
 bokeh==3.5.1
 bottle==0.12.19
 bottle-websocket==0.2.9
@@ -226,7 +224,6 @@ whichcraft==0.6.1
 wincertstore==0.2
 wrapt==1.13.3
 wsproto==1.0.0
-xbbg==0.7.7
 xgboost==2.1.0
 xlrd==2.0.1
 XlsxWriter==3.0.2
