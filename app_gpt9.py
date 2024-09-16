@@ -8,7 +8,17 @@ import openai
 import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
 # Load API key from environment variable
-openai_api_key = os.getenv('OPENAI_API_KEY')
+
+
+# --- Get OpenAI API key from user input ---
+openai_api_key = st.text_input("Entrez votre clé API OpenAI :", type="password")
+
+if openai_api_key:
+    openai.api_key = openai_api_key
+else:
+    st.warning("Veuillez entrer votre clé API OpenAI pour continuer.")
+    st.stop()  # Stop execution if no API key is provided
+
 
 if openai_api_key is None:
     st.error("OpenAI API key not found. Please set it as an environment variable.")
