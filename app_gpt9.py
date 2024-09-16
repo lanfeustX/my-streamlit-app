@@ -99,27 +99,56 @@ def read_pdf(file):
     return paragraphs
 
 # Function to extract a table of contents (TOC) based on document structure
-def extract_toc_gpt(paragraphs):
-    text = "\n".join(paragraphs)  # Combine paragraphs into a single text
-    prompt = (
-        "Génère une table des matières à partir de ce texte. "
-        "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
-        "Voici le texte :\n\n" + text
-    )
-    
-    try:
-        response = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=1500,  # You can adjust the token limit if needed
-            temperature=0.3,
-        )
-        toc = response.choices[0].message.content.strip()
-        return toc
+# Function to split the document into smaller chunks based on token size
+def split_paragraphs_for_toc(paragraphs, max_tokens=3000):
+    chunks = []
+    current_chunk = ""
+    current_token_count = 0
 
-    except Exception as e:
-        st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
-        return None
+    for para in paragraphs:
+        token_count = len(para.split())
+        if current_token_count + token_count > max_tokens:
+            chunks.append(current_chunk.strip())
+            current_chunk = para
+            current_token_count = token_count
+        else:
+            current_chunk += " " + para
+            current_token_count += token_count
+
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    
+    return chunks
+
+# Function to extract a table of contents (TOC) using GPT-3.5-turbo for each chunk
+def extract_toc_gpt(paragraphs):
+    chunks = split_paragraphs_for_toc(paragraphs)
+    toc_list = []
+
+    for chunk in chunks:
+        prompt = (
+            "Génère une table des matières à partir de ce texte. "
+            "Ce texte est un cours de droit divisé en différentes parties, sections, chapitres. "
+            "Voici le texte :\n\n" + chunk
+        )
+        
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=1500,  # Safe token limit
+                temperature=0.3,
+            )
+            toc = response.choices[0].message.content.strip()
+            toc_list.append(toc)
+
+        except Exception as e:
+            st.error(f"Erreur lors de l'appel à l'API OpenAI : {e}")
+            return None
+    
+    # Combine all TOC parts into one
+    full_toc = "\n".join(toc_list)
+    return full_toc
 # Preprocess text for PDFs to remove unwanted elements and retain paragraph structure
 def preprocess_paragraphs(paragraphs):
     cleaned_paragraphs = []
