@@ -28,7 +28,7 @@ if openai_api_key is None:
 openai.api_key = openai_api_key
 # Constants# Constants
 # Estimate words per page in Word
-WORDS_PER_PAGE = 800  # Rough estimate, assuming standard 12pt font, normal margins
+WORDS_PER_PAGE = 900  # Rough estimate, assuming standard 12pt font, normal margins
 MAX_PAGES = 13
 MAX_WORDS = WORDS_PER_PAGE * MAX_PAGES
 
@@ -53,7 +53,7 @@ def read_pdf(file):
     return paragraphs
 
 # Function to break the text into smaller chunks (within token limit)
-def split_into_chunks(paragraphs, max_chars=6000):
+def split_into_chunks(paragraphs, max_chars=4000):
     chunks = []
     current_chunk = ""
     
@@ -86,7 +86,7 @@ def summarize_chunk(chunk, target_word_count):
             messages=[
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=1500,
+            max_tokens=1800,
             temperature=0.3,
         )
         return response.choices[0].message.content.strip()
