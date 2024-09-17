@@ -321,7 +321,7 @@ uploaded_file = st.file_uploader("Téléchargez un fichier de cours (.docx ou .p
 # Initialize variables for paragraphs, summary, and table of contents
 paragraphs = None
 output = None
-
+output_format = None  # Initialize output_format here
 # Checkbox to select between generating a résumé or table of contents
 generate_toc = st.checkbox("Générer une table des matières")
 
