@@ -7,6 +7,8 @@ import os
 import openai
 import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 # Load API key from environment variable      
 
 FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "DejaVuSans.ttf")
@@ -275,20 +277,38 @@ def create_docx_file(content, heading):
 
 # Function to create a PDF file with the summarized text or table of contents
 
+# Function to create a PDF file using reportlab
 def create_pdf_file(content):
-    pdf = FPDF()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
-
-    # Load the DejaVuSans font from the local path
-    pdf.add_font("DejaVu", "", FONT_PATH, uni=True)
-    pdf.set_font("DejaVu", size=10)
-
-    clean_summary = content.replace("\n\n", "\n")  # Proper paragraph breaks but not double-spaced
-    pdf.multi_cell(0, 5, clean_summary)
-
+    # Create a buffer to hold the PDF
     buffer = BytesIO()
-    pdf.output(buffer)
+    
+    # Create a PDF canvas with A4 page size
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    
+    # Set up font and size
+    pdf.setFont("Helvetica", 10)
+
+    # Split the content into lines
+    lines = content.split("\n")
+
+    # Start drawing text at the top of the page
+    y_position = 800  # Start at the top of the page (A4 height is 842)
+    
+    for line in lines:
+        # Draw each line, move down the y-axis
+        pdf.drawString(50, y_position, line)
+        y_position -= 12  # Move 12 points down per line
+        
+        # If we're near the bottom of the page, create a new page
+        if y_position < 40:
+            pdf.showPage()  # Finish the current page
+            pdf.setFont("Helvetica", 10)  # Reset font for the new page
+            y_position = 800  # Reset y-position for the new page
+    
+    # Finish the PDF
+    pdf.save()
+    
+    # Get the value of the buffer and rewind it to the start
     buffer.seek(0)
     return buffer
 
