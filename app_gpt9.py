@@ -9,7 +9,7 @@ import streamlit as st
 from concurrent.futures import ThreadPoolExecutor
 # Load API key from environment variable      
 
-
+FONT_PATH = os.path.join(os.path.dirname(__file__), "fonts", "DejaVuSans.ttf")
 
 # --- App Design Enhancements ---
 
@@ -274,14 +274,18 @@ def create_docx_file(content, heading):
     return buffer
 
 # Function to create a PDF file with the summarized text or table of contents
+
 def create_pdf_file(content):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    pdf.add_font("DejaVu", "", "DejaVuSans.ttf", uni=True)
+    # Load the DejaVuSans font from the local path
+    pdf.add_font("DejaVu", "", FONT_PATH, uni=True)
     pdf.set_font("DejaVu", size=10)
-    pdf.multi_cell(0, 5, content)
+
+    clean_summary = content.replace("\n\n", "\n")  # Proper paragraph breaks but not double-spaced
+    pdf.multi_cell(0, 5, clean_summary)
 
     buffer = BytesIO()
     pdf.output(buffer)
