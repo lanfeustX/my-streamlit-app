@@ -2,10 +2,11 @@ from concurrent.futures import ThreadPoolExecutor
 from docx import Document
 from io import BytesIO
 import streamlit as st
-from PyPDF2 import PdfReader
 import re
-import fitz
+import openai
 from fpdf import FPDF
+import fitz  # PyMuPDF
+
 
 import openai
 
